@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suifan - Connect with Creators</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet">
+    
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #6366F1, #A855F7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #6366F1, #A855F7);
+        }
+
+        .auth-bg {
+            background-image: url('https://images.unsplash.com/photo-1639762681485-074b7f938ba0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2832&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #6366F1;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        .interest-btn.selected {
+            background: linear-gradient(135deg, #6366F1, #A855F7);
+            color: white;
+            border-color: transparent;
+            transform: scale(1.05);
+        }
+
+        .role-btn.selected {
+            border-color: #6366F1;
+            background: #EEF2FF;
+            transform: scale(1.05);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .popup {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                padding: 1rem;
+            }
+            
+            .auth-form {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="auth-bg">
+    <!-- Loader -->
+    <div id="loader" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 hidden">
+        <div class="relative">
+            <div class="loader"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <span class="text-4xl font-bold text-white">SF</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Container -->
+    <div class="min-h-screen flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <!-- Sign Up Form -->
+        <div id="signupForm" class="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-8 w-full max-w-md auth-form">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold gradient-text">SF</h2>
+                <p class="text-gray-600 mt-2">Create your account</p>
+            </div>
+
+            <form id="signup" class="space-y-6">
+                <div>
+                    <label class="block text-gray-700 mb-2">Username</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <input type="text" id="username" class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 mb-2">Email</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                        <input type="email" id="email" class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 mb-2">Password</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" id="password" class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-4 gradient-bg text-white rounded-lg hover:opacity-90 transition-all duration-300 transform hover:scale-[1.02]">
+                    Sign Up
+                </button>
+
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" 
+                            onclick="handleGoogleLogin()"
+                            class="flex items-center justify-center w-full px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 mr-2">
+                        <span class="text-gray-700">Google</span>
+                    </button>
+                    <button type="button"
+                            onclick="handleFacebookLogin()"
+                            class="flex items-center justify-center w-full px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" class="w-5 h-5 mr-2">
+                        <span class="text-gray-700">Facebook</span>
+                    </button>
+                </div>
+            </form>
+
+            <p class="text-center mt-6 text-gray-600">
+                Already have an account? 
+                <a href="#" id="showLogin" class="text-indigo-600 hover:text-indigo-800">Login</a>
+            </p>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm" class="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-8 w-full max-w-md auth-form hidden">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold gradient-text">SF</h2>
+                <p class="text-gray-600 mt-2">Welcome back</p>
+            </div>
+
+            <form id="login" class="space-y-6">
+                <div>
+                    <label class="block text-gray-700 mb-2">Username</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <input type="text" id="loginUsername" class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 mb-2">Password</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" id="loginPassword" class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                        <label for="remember" class="ml-2 text-sm text-gray-600">Remember me</label>
+                    </div>
+                    <a href="#" class="text-sm text-indigo-600 hover:text-indigo-800">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="w-full py-4 gradient-bg text-white rounded-lg hover:opacity-90 transition-all duration-300 transform hover:scale-[1.02]">
+                    Login
+                </button>
+
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or login with</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" 
+                            onclick="handleGoogleLogin()"
+                            class="flex items-center justify-center w-full px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5 mr-2">
+                        <span class="text-gray-700">Google</span>
+                    </button>
+                    <button type="button"
+                            onclick="handleFacebookLogin()"
+                            class="flex items-center justify-center w-full px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" class="w-5 h-5 mr-2">
+                        <span class="text-gray-700">Facebook</span>
+                    </button>
+                </div>
+            </form>
+
+            <p class="text-center mt-6 text-gray-600">
+                Don't have an account? 
+                <a href="#" id="showSignup" class="text-indigo-600 hover:text-indigo-800">Sign Up</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- User Type Popup -->
+    <div id="userTypePopup" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden">
+        <div class="popup bg-white/95 rounded-2xl p-8 w-full max-w-md mx-4">
+            <h3 class="text-2xl font-bold mb-6 text-center gradient-text">Choose Your Role</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button onclick="selectUserType('fan')" class="role-btn p-8 border-2 rounded-xl hover:shadow-lg transition-all duration-300">
+                    <i class="fas fa-users text-5xl mb-4 text-indigo-600"></i>
+                    <h4 class="font-semibold text-lg">Fan</h4>
+                    <p class="text-sm text-gray-500 mt-2">Support your favorite creators</p>
+                </button>
+                <button onclick="selectUserType('creator')" class="role-btn p-8 border-2 rounded-xl hover:shadow-lg transition-all duration-300">
+                    <i class="fas fa-star text-5xl mb-4 text-indigo-600"></i>
+                    <h4 class="font-semibold text-lg">Creator</h4>
+                    <p class="text-sm text-gray-500 mt-2">Share your content</p>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interests Popup -->
+    <div id="interestsPopup" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm hidden">
+        <div class="popup bg-white/95 rounded-2xl p-8 w-full max-w-md mx-4">
+            <h3 class="text-2xl font-bold mb-6 text-center gradient-text">Select Your Interests</h3>
+            <p class="text-center text-gray-600 mb-6">Choose 2-3 interests</p>
+            <div class="grid grid-cols-2 gap-4" id="interestsList">
+                <!-- Interests will be populated dynamically -->
+            </div>
+            <div class="mt-6">
+                <p class="text-center text-gray-600 mb-4">
+                    Selected: <span id="selectedCount">0</span>/3
+                </p>
+                <button onclick="completeSetup()" 
+                        id="completeBtn"
+                        disabled
+                        class="w-full py-4 gradient-bg text-white rounded-lg opacity-50 transition-all duration-300">
+                    Complete Setup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        let selectedInterests = new Set();
+        let userType = '';
+
+       function showToast(message) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: "top",
+                position: "right",
+                className: "rounded-lg",
+                style: {
+                    background: "linear-gradient(135deg, #6366F1, #A855F7)",
+                }
+            }).showToast();
+        }
+
+        function showLoader() {
+            document.getElementById('loader').classList.remove('hidden');
+        }
+
+        function hideLoader() {
+            document.getElementById('loader').classList.add('hidden');
+        }
+
+        function handleGoogleLogin() {
+            showLoader();
+            setTimeout(() => {
+                hideLoader();
+                showToast('Successfully logged in with Google!');
+                setTimeout(() => {
+                    document.getElementById('userTypePopup').classList.remove('hidden');
+                }, 1000);
+            }, 2000);
+        }
+
+        function handleFacebookLogin() {
+            showLoader();
+            setTimeout(() => {
+                hideLoader();
+                showToast('Successfully logged in with Facebook!');
+                setTimeout(() => {
+                    document.getElementById('userTypePopup').classList.remove('hidden');
+                }, 1000);
+            }, 2000);
+        }
+
+        // Form switching
+        document.getElementById('showLogin').addEventListener('click', () => {
+            document.getElementById('signupForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+        });
+
+        document.getElementById('showSignup').addEventListener('click', () => {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.remove('hidden');
+        });
+
+        // Sign up form
+        document.getElementById('signup').addEventListener('submit', (e) => {
+            e.preventDefault();
+            showLoader();
+            setTimeout(() => {
+                hideLoader();
+                showToast('Signup successful!');
+                document.getElementById('showLogin').click();
+            }, 2000);
+        });
+
+        // Login form
+        document.getElementById('login').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            showLoader();
+            setTimeout(() => {
+                hideLoader();
+                showToast(`Welcome back, ${username}!`);
+                setTimeout(() => {
+                    document.getElementById('userTypePopup').classList.remove('hidden');
+                }, 1000);
+            }, 2000);
+        });
+
+        function selectUserType(type) {
+            userType = type;
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            setTimeout(() => {
+                document.getElementById('userTypePopup').classList.add('hidden');
+                showInterestsPopup(type);
+            }, 500);
+        }
+
+        function toggleInterest(interest) {
+            const btn = event.currentTarget;
+            if (selectedInterests.has(interest)) {
+                selectedInterests.delete(interest);
+                btn.classList.remove('selected');
+            } else if (selectedInterests.size < 3) {
+                selectedInterests.add(interest);
+                btn.classList.add('selected');
+            }
+
+            updateInterestCount();
+        }
+
+        function updateInterestCount() {
+            const count = selectedInterests.size;
+            document.getElementById('selectedCount').textContent = count;
+            const completeBtn = document.getElementById('completeBtn');
+            
+            if (count >= 2 && count <= 3) {
+                completeBtn.disabled = false;
+                completeBtn.classList.remove('opacity-50');
+            } else {
+                completeBtn.disabled = true;
+                completeBtn.classList.add('opacity-50');
+            }
+        }
+
+        function showInterestsPopup(type) {
+            const interests = type === 'fan' ? 
+                ['Music', 'Art', 'Gaming', 'Sports', 'Technology', 'Fashion'] :
+                ['Content Creation', 'Streaming', 'Art', 'Music', 'Education', 'Entertainment'];
+
+            const interestsList = document.getElementById('interestsList');
+            interestsList.innerHTML = interests.map(interest => `
+                <button onclick="toggleInterest('${interest}')" 
+                        class="interest-btn p-4 border-2 rounded-xl hover:shadow-lg transition-all duration-300 text-center">
+                    <span class="block text-lg font-medium">${interest}</span>
+                </button>
+            `).join('');
+
+            document.getElementById('interestsPopup').classList.remove('hidden');
+        }
+
+      function completeSetup() {
+    showLoader();
+    setTimeout(() => {
+        hideLoader();
+        showToast(`Profile setup completed with ${selectedInterests.size} interests!`);
+        
+        // Redirect based on userType
+        setTimeout(() => {
+            document.getElementById('userTypePopup').classList.add('hidden');
+            document.getElementById('interestsPopup').classList.add('hidden');
+            
+            // Proper conditional redirect
+            if (userType === 'fan') {
+                window.location.href = 'fan-dashboard.html';
+            } else if (userType === 'creator') {
+                window.location.href = 'creator-dashboard.html';
+            }
+        }, 1000);
+    }, 2000);
+} 
+   
+
+        
+    </script>
+</body>
+</html>
